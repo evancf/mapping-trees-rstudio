@@ -9,10 +9,10 @@ maptrees(x)
 # File must have 14 columns: 
 # First 8 are x,y coordinates of grid cell corners
 # Next 6 are: Known left x, Known left y, Known right x, Known right y, Distance to left target, Distance to right target
-datain <- read.csv("maptesta2b3.csv", header=FALSE)
+datain <- read.csv("maptesta0za1.csv", header=FALSE)
 
 # Read corners coordinates and labels from .csv
-corners <- read.csv("a2b3corners.csv")
+corners <- read.csv("a0za1corners.csv")
 
 # How many rows? (= how many times to run function)
 repeats <- nrow(datain)
