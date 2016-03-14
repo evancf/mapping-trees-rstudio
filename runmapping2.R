@@ -39,7 +39,9 @@ dataout
 
 # Place mapped trees on a plot
 library(ggplot2)
-library(ggrepel)
+# ggrepel looks like it will help move the labels away from the points.
+# I'm still working on getting it to run on my computer.
+# library(ggrepel)
 
 forplot <- as.data.frame(dataout[1:repeats,1:3])
 
