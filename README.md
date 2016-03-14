@@ -20,6 +20,8 @@ mapping_temp.csv: mapping data for all trees at all sites across all islands.
 
 maptesta2b3.csv: the subset of mapping_temp that contains cell a2b3 in NBLAS on Guam. The columns are unlabeled, but they are: the gps coordinates of the corners of the cell, the gps coordinates of the left and right target points, the distance from each tree to the left and right target points, the tag number, and the species. This is the format that runmapping2.r and maptrees use. 
 
+mappingtest3.csv: the subset of mapping_temp for a0-za1 in nblas, also in the format that runmapping2 and maptrees use.
+
 mapping_nblas.xlsx: the subset of mapping_temp that contains NBLAS on Guam. 
 
 Remaining files:
