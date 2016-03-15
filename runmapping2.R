@@ -39,16 +39,14 @@ dataout
 
 # Place mapped trees on a plot
 library(ggplot2)
-# ggrepel looks like it will help move the labels away from the points.
-# I'm still working on getting it to run on my computer.
-# library(ggrepel)
+library(ggrepel)
 
 forplot <- as.data.frame(dataout[1:repeats,1:3])
 
 visualmap <- ggplot(forplot) + geom_point(aes(UnknownX, UnknownY)) + 
-  geom_text(aes(UnknownX, UnknownY, label=Tag)) +
+  geom_text_repel(aes(UnknownX, UnknownY, label=Tag)) +
   theme_bw()+
   geom_point(data=corners, aes(cornerx, cornery, label=cornerpt), size=3, color="blue") +
-  geom_text(data=corners, aes(cornerx, cornery, label=cornerpt), size=6, color="blue")
+  geom_text_repel(data=corners, aes(cornerx, cornery, label=cornerpt), size=6, color="blue")
 visualmap
 
