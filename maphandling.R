@@ -3,6 +3,10 @@
 getcorners <- function(word) {
   quaddiag <- as.character(word)
   
+  corner_names_out <- matrix(data=NA, nrow=2, ncol=3, byrow=TRUE, dimnames=NULL)
+  corner_names_out[1,3] <- quaddiag
+  corner_names_out[2,3] <- quaddiag
+  
   letterindexone <- 0
   numberindexone <- 1
   
@@ -95,19 +99,16 @@ getcorners <- function(word) {
   numberindexfour <- numberindexthree
   
   corner_names_source <- read.csv("nblas_gps_names.csv", header=FALSE)
-  # corner_points_source <- read.csv("nblasgpscoords.csv")
   
   corner_names_source_matrix <- as.matrix(corner_names_source)
   
-  corner_names_out <- matrix(data=NA, nrow=2, ncol=2, byrow=TRUE, dimnames=NULL)
-  corner_points_out <- matrix(data=NA, nrow=4, ncol=4, byrow=TRUE, dimnames=NULL)
   
   corner_names_out[1,1] <- (corner_names_source_matrix[numberindexone, letterindexone])
   corner_names_out[1,2] <- (corner_names_source_matrix[numberindextwo, letterindextwo])
   corner_names_out[2,2] <- (corner_names_source_matrix[numberindexthree, letterindexthree])
   corner_names_out[2,1] <- (corner_names_source_matrix[numberindexfour, letterindexfour])
+
   
   return(corner_names_out)
 }
 
-# next would be to associate gps points with each name and output those

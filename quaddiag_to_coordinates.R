@@ -1,10 +1,10 @@
 # Function to make a .csv of corner names and gps coordinates given the quaddiag value...
 
-cornersgps <- function(cell_name_in) {
+cornersgpsfile <- function(cell_name_in) {
 source("maphandling.R")
 source("corner_gps_function.R")
 
-cell_name <- cell_name_in # the quaddiag value
+cell_name <- as.character(cell_name_in) # the quaddiag value
 corners_names <- getcorners(cell_name)
 
 corners_names

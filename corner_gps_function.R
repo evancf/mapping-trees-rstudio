@@ -4,10 +4,11 @@
 cornergps <- function(cornernames) {
   # empty output matrix
   cornersrow <- c("1", "2", "3", "4")
-  cornerscol <- c("cornerpt", "cornerx", "cornery")
-  cornerscoordinates <- matrix(data=NA, nrow=4, ncol=3, 
+  cornerscol <- c("cornerpt", "cornerx", "cornery", "cell_name")
+  cornerscoordinates <- matrix(data=NA, nrow=4, ncol=4, 
                                byrow=TRUE, 
                                dimnames=list(cornersrow, cornerscol))
+  cornerscoordinates[1:4,4] <- cornernames[1,3]
   
   # get names from input
   corner_one_name <- cornernames[1,1]
@@ -19,7 +20,7 @@ cornergps <- function(cornernames) {
   gps_library <- read.csv("nblas_gps_library.csv")
   
   # for first corner
-  attempt <- 2
+  attempt <- 1
   possibleattempts <- nrow(gps_library)
   while (attempt <= possibleattempts) {
     name_character <- as.character(gps_library[attempt, 1])
@@ -32,7 +33,7 @@ cornergps <- function(cornernames) {
   }
   
   # for second corner
-  attempt <- 2
+  attempt <- 1
   possibleattempts <- nrow(gps_library)
   while (attempt <= possibleattempts) {
     name_character <- as.character(gps_library[attempt, 1])
@@ -45,7 +46,7 @@ cornergps <- function(cornernames) {
   }
   
   # for third corner
-  attempt <- 2
+  attempt <- 1
   possibleattempts <- nrow(gps_library)
   while (attempt <= possibleattempts) {
     name_character <- as.character(gps_library[attempt, 1])
@@ -58,7 +59,7 @@ cornergps <- function(cornernames) {
   }
   
   # for fourth corner
-  attempt <- 2
+  attempt <- 1
   possibleattempts <- nrow(gps_library)
   while (attempt <= possibleattempts) {
     name_character <- as.character(gps_library[attempt, 1])
@@ -69,7 +70,7 @@ cornergps <- function(cornernames) {
     }
     attempt = attempt + 1
   }
-  
+    
   return(cornerscoordinates)
   
 }
