@@ -29,7 +29,7 @@ corner_point_names <- function(word) {
         letterindexone <- 6
         numberindexone <- 6
       }
-    } 
+    }
     
     diagnostic <- substring(quaddiag, 5,5)
     
@@ -48,7 +48,7 @@ corner_point_names <- function(word) {
     }
     
     if (identical(diagnostic, "4")) {
-      letter <- substring(quaddiag, 6,6)
+      letter <- substring(quaddiag, 1,1)
       if (identical(letter, "a")) letterindexone <- 2
       if (identical(letter, "b")) letterindexone <- 3
       if (identical(letter, "c")) letterindexone <- 4
@@ -59,7 +59,7 @@ corner_point_names <- function(word) {
     }
     
     if (identical(diagnostic, "0")) {
-      letter <- substring(quaddiag, 6,6)
+      letter <- substring(quaddiag, 1,1)
       if (identical(letter, "a")) letterindexone <- 2
       if (identical(letter, "b")) letterindexone <- 3
       if (identical(letter, "c")) letterindexone <- 4
