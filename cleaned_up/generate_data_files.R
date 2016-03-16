@@ -1,18 +1,31 @@
-# contains functions...
-# maybe change this so functions are stored in a folder and this just runs them all
+# generate_data_files contains three functions to make input files for the mapping 
+# functions using mapping_temp.csv.
+#
+# Right now, you must manually tell it which site you want to map. It's set to 
+# nblas. It could be generalized to every site.
+#
+# Functions:
+# generate_corners_files() takes no arguments and writes .csv files containing the
+# x,y coordinates of the corner points of every grid cell. It stores them in a 
+# folder called mapping_data/nblas. 
+#
+# generate_trees_files() takes no arguments and writes .csv files containing the 
+# tag number, species, distance to left and right known points, and coordinates of 
+# left and right known points for every tree in each grid cell. These files are also
+# stored in mapping_data/nblas. 
+#
+# generate_cells_list() takes no arguments and writes a .csv file containing a list 
+# of the cells listed for a site. This might not be necessary - I think every site
+# should have the same list of cells? The .csv file does NOT go in mapping_data/nblas -
+# it stays in the main working directory.
+#
 
-# [2] function to make gps_library.csv
-### To be written. 
-### gps_library is a table of gps coordinates for the named grid points at a site.
-### For nblas, you can use nblas_gps_library.csv. I got this from the LKPx/LKPy columns of mapping_temp.csv.
-### gps_library will be used by the functions in get_corner_coordinates.R
-
-#[3-4]
 # import whole mapping database
 mapping_entire <- read.csv("mapping_temp.csv", header=TRUE)
 siteslist <- unique(mapping_entire$site)
 sitescount <- length(siteslist)
 
+# choose a site and subset the main database
 selected_site <- "nblas"
 
 selected_site_entire <- mapping_entire[mapping_entire$site==selected_site,]

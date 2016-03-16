@@ -1,3 +1,19 @@
+# find_tree_coordinates is a function that takes a table of the gps coordinates of the 
+# four corners of a grid cell and a vector of the distance from an unknown point to 
+# two known points, and returns the coordinates of the unknown point.
+#
+# It does this by making two circles centered at known points and finding their
+#  two (or one, or zero) intersection points. If there are two intersections,
+# it returns coordinates for the point closer to the middle of the grid cell. If 
+# any necessary fields (e.g. coordinates for known points, coordinates for grid cell
+# corners, or distance to known points) are missing, it returns NA. If there are no
+# intersections (because the distances to the two known points add up to the less than
+# the length of a straight line connecting the two known points), it returns NA.
+#
+# make_tree_maps.R uses find_tree_coordinates to locate and plot all the trees within
+# a grid cell.
+#
+
 find_tree_coordinates <- function(cordat, mapdat) {  
   # Coordinates of the 4 corners of the grid cell
   # A and B could be KnownLeft and KnownRight, but this isn't necessary.
