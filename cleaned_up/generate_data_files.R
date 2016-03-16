@@ -34,16 +34,15 @@ selected_site_entire <- mapping_entire[mapping_entire$site==selected_site,]
 site_col_subset <- c("island", "site", "quaddiag", "species", "leftdist", "rightdist", "tag", "RKPx", "RKPy", "LKPx", "LKPy" )
 site_subsetted <- selected_site_entire[site_col_subset]
 
-# create data frames for each cell (by quaddiag)
-## count and list all the cells with data at this site
+# count and list all the cells with data at this site
 available_cells <- unique(site_subsetted$quaddiag)
 ncells <- length(available_cells)
 
 
-# [3] function to make corners gps .csv files
+### function to make corners gps .csv files
 ### uses functions in get_corner_coordinates.R 
 ### writes .csv files for the corner points of every grid cell
-### for now, stores them in a subdirectory "map_data_files"
+### for now, stores them in a subdirectory "map_data_files/"
 source("get_corner_coordinates.R")
 generate_corners_files <- function() {
   completed <- 1
