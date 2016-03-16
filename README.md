@@ -1,6 +1,8 @@
 # mapping-trees-rstudio
 This version communicates with my Rstudio.
 
+Addition March 16: The folder "cleaned_up" is the best and most up-to-date version. 
+
 Repository contents: 
 
 Mapping R files:
