@@ -74,6 +74,13 @@ find_tree_coordinates <- function(cordat, mapdat) {
   
   # If one of the distances is NA, return NA. I think this happens when one of the 
   # grid cell coordinates is missing, or no intersection points exist. 
+  #
+  # If the two solutions are the same distance from the middle, arbitrarily use the
+  # first solution. I think this happens when there is exactly one intersection point.
+  # 
+  # Otherwise pick whichever solution is closer to the middle.
+  
+  
   if (is.na(SolutionOneDistance))  {
     UnknownX <- NA
     UnknownY <- NA
