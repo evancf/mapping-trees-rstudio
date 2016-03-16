@@ -39,25 +39,38 @@ available_cells <- unique(site_subsetted$quaddiag)
 ncells <- length(available_cells)
 
 
-### function to make corners gps .csv files
-### uses functions in get_corner_coordinates.R 
-### writes .csv files for the corner points of every grid cell
-### for now, stores them in a subdirectory "map_data_files/"
-source("get_corner_coordinates.R")
+### generate_corners_files is a function to write .csv files of the coordinates of the
+### four corners of a grid cell and store them in a subdirectory "map_data_files/[site]/"
+
 generate_corners_files <- function() {
+  # Source a function to get the 4 corner point names from the quaddiag value, and
+  # a function to get the coordinates for each of the 4 points. 
+  source("corner_point_names.R")
+  source("corner_point_coordinates.R")
+  
+  # For every grid cell at a site, get the names and coordinates of the corner points.
+  # Write the coordinates to a .csv file. Name it according to the grid cell, and put
+  # it in a folder according to the site. 
   completed <- 1
   while (completed <= ncells) {
     cell_identifier <- as.character(available_cells[completed])
-    corners_coords <- cornersgpsfile(cell_identifier)
+    corners_names <- corner_point_names(cell_identifier)
+    corners_coordinates <- data.frame(corner_point_coordinates(corners_names))
     filename <- paste("mapping_data/",selected_site,"/",cell_identifier, "_corners.csv", sep="")
-    write.csv(corners_coords, file=filename, quote=FALSE, row.names=FALSE)
+    write.csv(corners_coordinates, file=filename, quote=FALSE, row.names=FALSE)
     completed <- completed + 1
   }
 }
-# [4] function to make mapping input .csv files
-### writes .csv files of desired data for each grid cell
-### for now, stores them in a subdirectory "map_data_files"
+
+
+### generate_trees_files is a function to write .csv files to be used as input for the
+### mapping function (make_tree_maps, which calls find_tree_coordinates). It stores 
+### them in "/map_data_files/[site]". 
+
 generate_trees_files <- function() {
+  # For every grid cell at a site, subset the site-specific data frame by quaddiag.
+  # Write this data frame to a .csv file labeled by grid cell, in a folder labeled
+  # by site. 
   completed <- 1
   while (completed <= ncells) {
     cell_identifier <- as.character(available_cells[completed])
@@ -68,8 +81,12 @@ generate_trees_files <- function() {
   }
 }
 
-# [5] function to make a list of the grid cells at a site
-### this needs to be changed to be general
+
+### generate_cells_list is a function to make a list of the grid cells at a site.
+### The list is stored in mapping_data/.
+### It might not be necessary to generate a list for every site - shouldn't they all
+### be the same?
+
 generate_cells_list <- function () {
   cells_list_title <- paste("mapping_data/", selected_site, "_cells_list.csv", sep="")
   write.csv(as.data.frame(available_cells), file=cells_list_title, quote = FALSE, row.names=FALSE)

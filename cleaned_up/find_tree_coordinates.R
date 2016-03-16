@@ -72,6 +72,8 @@ find_tree_coordinates <- function(cordat, mapdat) {
   SolutionOneDistance <- ((SolutionOneX - GridCellCenterX)^2 + (SolutionOneY - GridCellCenterY)^2)^.5
   SolutionTwoDistance <- ((SolutionTwoX - GridCellCenterX)^2 + (SolutionTwoY - GridCellCenterY)^2)^.5
   
+  # If one of the distances is NA, return NA. I think this happens when one of the 
+  # grid cell coordinates is missing, or no intersection points exist. 
   if (is.na(SolutionOneDistance))  {
     UnknownX <- NA
     UnknownY <- NA
