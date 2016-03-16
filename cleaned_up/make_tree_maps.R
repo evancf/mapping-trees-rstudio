@@ -45,8 +45,8 @@ make_tree_maps <- function() {
     
     # Create empty matrix to store results. 
     dataoutrows <- c(1:repeats)
-    dataoutcols <- c("UnknownX", "UnknownY", "Tag")
-    dataout <- matrix(data = NA, nrow = repeats, ncol = 3, byrow = TRUE, dimnames = list(dataoutrows, dataoutcols))
+    dataoutcols <- c("UnknownX", "UnknownY", "Tag","Issue")
+    dataout <- matrix(data = NA, nrow = repeats, ncol = 4, byrow = TRUE, dimnames = list(dataoutrows, dataoutcols))
     
     # Run mapping and store results for every tree
     sofar <- 1
