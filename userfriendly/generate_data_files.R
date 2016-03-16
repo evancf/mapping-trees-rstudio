@@ -9,7 +9,7 @@
 
 #[3-4]
 # import whole nblas database
-nblas_entire <- read.csv("mapping_nblas.csv", header=TRUE)
+nblas_entire <- read.csv("mapping_nblas_master.csv", header=TRUE)
 
 # select desired columns
 nblas_col_subset <- c("island", "site", "quaddiag", "species", "leftdist", "rightdist", "tag", "RKPx", "RKPy", "LKPx", "LKPy" )
@@ -40,7 +40,7 @@ generate_trees_files <- function() {
   completed <- 1
   while (completed <= ncells) {
     cell_identifier <- as.character(available_cells[completed])
-    csv_title <- paste("map_data_files/", cell_identifier, "_trees.csv",sep="")
+    csv_title <- paste("mapping_data/", cell_identifier, "_trees.csv",sep="")
     temp_subset <- nblas_subsetted[nblas_subsetted$quaddiag==cell_identifier, ]
     write.csv(temp_subset, file = csv_title,  quote=FALSE, row.names=FALSE)
     completed <- completed + 1
@@ -50,5 +50,5 @@ generate_trees_files <- function() {
 # [5] function to make a list of the grid cells at a site
 ### this needs to be changed to be general
 generate_cells_list <- function () {
-  write.csv(as.data.frame(available_cells), file="map_data_files/nblas_cell_names.csv", quote = FALSE, row.names=FALSE)
+  write.csv(as.data.frame(available_cells), file="mapping_data/nblas_cell_names.csv", quote = FALSE, row.names=FALSE)
 }
