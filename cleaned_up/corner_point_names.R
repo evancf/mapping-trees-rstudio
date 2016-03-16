@@ -1,4 +1,10 @@
-## Code to take a quaddiag value, find it on a grid, and produce the 4 corner points of the cell.
+# corner_point_names is a function to find the names of the four corners of a grid cell
+# given its quaddiag value. It takes the quaddiag value and returns the corners as a
+# 2x2 table. 
+#
+# corner_point_coordinates finds the gps coordinates corresponding to the grid point names. 
+#
+# gps_names.csv is a table showing the arrangement of the grid points. 
 
 corner_point_names <- function(word) {
   quaddiag <- as.character(word)
@@ -98,7 +104,7 @@ corner_point_names <- function(word) {
   numberindexthree <- numberindexone + 1
   numberindexfour <- numberindexthree
   
-  corner_names_source <- read.csv("nblas_gps_names.csv", header=FALSE)
+  corner_names_source <- read.csv("gps_names.csv", header=FALSE)
   
   corner_names_source_matrix <- as.matrix(corner_names_source)
   

@@ -1,8 +1,18 @@
-# cornernames should be a matrix
+# corner_point_coordinates is a function that takes a 2x2 table of the names of the 
+# four corners of a grid cell, and returns a 4x4 table of the name and x-y coordinates
+# of each point, plus the name of the grid cell formed by the 4 points.
+#
+# nblas_gps_library.csv contains the gps coordinates for each grid point. It is missing
+# coordinates for z4e. In progress: making a generic function to generate a similar 
+# gps library for each site.
+#
+# corner_point_names.R contains the function to make the 2x2 table of names from a 
+# quaddiag value.
+#
 
-# make it a function once it works
+
 corner_point_coordinates <- function(cornernames) {
-  # empty output matrix
+  # make an empty output matrix
   cornersrow <- c("1", "2", "3", "4")
   cornerscol <- c("cornerpt", "cornerx", "cornery", "cell_name")
   cornerscoordinates <- matrix(data=NA, nrow=4, ncol=4, 
@@ -16,7 +26,7 @@ corner_point_coordinates <- function(cornernames) {
   corner_three_name <- cornernames[2,2]
   corner_four_name <- cornernames[2,1]
   
-  # match each name to its gps point
+  # load potential coordinates 
   gps_library <- read.csv("nblas_gps_library.csv")
   
   # for first corner
