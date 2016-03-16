@@ -2,15 +2,15 @@ make_tree_maps <- function() {
 # source find coordinates
 source("find_tree_coordinates.R")
 
-cellnames <- read.csv("mapping_data/nblas_cell_names.csv", header=TRUE)
+cellnames <- read.csv("mapping_data/nblas_cells_list.csv", header=TRUE)
 ncells <- length(cellnames$available_cells)
 
 completed <- 1
 
 while (completed <= ncells){
   
-  mapdatastring <- paste("mapping_data/", as.character(cellnames$available_cells[completed]),"_trees.csv", sep="")
-  cornersdatastring <- paste("mapping_data/", as.character(cellnames$available_cells[completed]), "_corners.csv", sep="")
+  mapdatastring <- paste("mapping_data/nblas/", as.character(cellnames$available_cells[completed]),"_trees.csv", sep="")
+  cornersdatastring <- paste("mapping_data/nblas/", as.character(cellnames$available_cells[completed]), "_corners.csv", sep="")
   
   mapdata <- read.csv(mapdatastring, header=TRUE)
   columns_for_mapping <- c("LKPx", "LKPy", "RKPx", "RKPy", "leftdist", "rightdist")

@@ -11,9 +11,9 @@ cornersgpsfile <- function(cell_name_in) {
   
   corners_coordinates <- data.frame(corner_point_coordinates(corners_names))
   
-  corners_coordinates
+  return (corners_coordinates)
   
-  filename <- paste("mapping_data/",cell_name, "_corners.csv", sep="")
-  
-  write.csv(corners_coordinates, file=filename, quote=FALSE, row.names=FALSE)
+#   filename <- paste("mapping_data/",cell_name, "_corners.csv", sep="")
+#   
+#   write.csv(corners_coordinates, file=filename, quote=FALSE, row.names=FALSE)
 }
