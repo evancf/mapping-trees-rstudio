@@ -15,6 +15,7 @@
 #
 
 find_tree_coordinates <- function(cordat, mapdat) {  
+  library(sp)
   # Coordinates of the 4 corners of the grid cell
   # A and B could be KnownLeft and KnownRight, but this isn't necessary.
   GridPointAx <- cordat[1,2]
@@ -51,7 +52,7 @@ find_tree_coordinates <- function(cordat, mapdat) {
     UnknownY <- NA
     Issue <- "Distances_too_small"
     UnknownCoords <- c(UnknownX, UnknownY, Issue)
-    return(UnknownCoords)
+   return(UnknownCoords)
     
   }  
   
@@ -101,15 +102,27 @@ find_tree_coordinates <- function(cordat, mapdat) {
   } else if (SolutionOneDistance == SolutionTwoDistance) {
     UnknownX <- SolutionOneX
     UnknownY <- SolutionOneY
-    Issue <- "Okay"
+    inside <- point.in.polygon(UnknownX, UnknownY, c(GridPointAx, GridPointBx, GridPointCx, GridPointDx, GridPointAx), c(GridPointAy, GridPointBy, GridPointCy, GridPointDy, GridPointAy))
+    if (inside == 0) {
+      Issue <- "Outside_cell"
+      } else Issue <- "Okay"
+    
   } else if (SolutionOneDistance < SolutionTwoDistance) {
     UnknownX <- SolutionOneX
     UnknownY <- SolutionOneY
-    Issue <- "Okay"
+    inside <- point.in.polygon(UnknownX, UnknownY, c(GridPointAx, GridPointBx, GridPointCx, GridPointDx, GridPointAx), c(GridPointAy, GridPointBy, GridPointCy, GridPointDy, GridPointAy))
+    if (inside == 0) {
+      Issue <- "Outside_cell"
+    } else Issue <- "Okay"
+    
   } else if (SolutionTwoDistance < SolutionOneDistance) {
     UnknownX <- SolutionTwoX
     UnknownY <- SolutionTwoY
-    Issue <- "Okay"
+    inside <- point.in.polygon(UnknownX, UnknownY, c(GridPointAx, GridPointBx, GridPointCx, GridPointDx, GridPointAx), c(GridPointAy, GridPointBy, GridPointCy, GridPointDy, GridPointAy))
+    if (inside == 0) {
+      Issue <- "Outside_cell"
+    } else Issue <- "Okay"
+    
   }
   
   # Return chosen coordinates
