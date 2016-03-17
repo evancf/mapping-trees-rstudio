@@ -1,0 +1,28 @@
+The files in this folder work together to make maps of each grid cell and data files containing the coordinates of all the trees in each grid cell, starting from mapping_temp.csv. 
+
+They put all their input and output files in a folder called mapping_data_general, and then inside folders labeled by site.
+
+The files themselves have more detailed comments. Here's an overview:
+
+general_run_everything.R: Quickly run everything.
+
+general_generate_data_files.R: general_map_setup("file name", "site name") creates input files to be used by the mapping function. It can handle sites one at a time (> general_map_setup("mapping_temp.csv", "nblas")). All the sites at once (> general_map_setup("mapping_temp.csv", "all")) still has bugs.
+
+general_make_tree_maps: make_tree_maps_general("site") uses find_tree_coordinates.R to find the coordinates of all the trees in all the cells at a site. It makes plots with the trees and the corners of each grid cell. It also makes .csv files of the coordinates for all the trees in each grid cell. The outputs go in mapping_data_general/[site]/mapping_output.
+
+The "tree_coordinates" .csv files include an "Issue" column that tells why a tree has NAs instead of coordinates, or if there is a known or likely error in the tree's placement. Here's what the issues mean:
+"Map_info_missing": One of the mapping data fields (distance to a known point, or coordinates of a known point) is blank.
+"Distances_too_small": The sum of the distances from the tree to the left and right known points is less than the length of the straight line connecting the two corners.
+"Corner_missing": One of the four grid cell corners is missing GPS coordinates.
+"Outside_cell": It was possible to plot the tree, but it landed outside its grid cell.
+"Small_RtoL": The distance between the right and left known points is small - for now, less than 9m - meaning small differences in the measured distance from a tree to the known points will translate into large differences in where the tree gets plotted. 
+
+corner_points_coordinates_general.R: finds the GPS coordinates of the four corners of a grid cell given the names of the points. Used by general_map_setup.
+
+corner_point_names.R: finds the names of the four corners of a grid cell given its quaddiag value. Used by general_map_setup.
+
+find_tree_coordinates.R: calculates the coordinates of a tree given its mapping information. If there's an error, returns NA and a note under Issue. Used by make_tree_maps_general.
+
+point_names.csv: a list of the possible names for grid cells. Used by general_map_setup.
+
+gps_names.csv: a table showing the arrangement of grid points relative to each other. Used by corner_point_names, as part of general_map_setup. 
