@@ -1,15 +1,13 @@
 # corner_point_coordinates is a function that takes a 2x2 table of the names of the 
-# four corners of a grid cell, and returns a 4x4 table of the name and x-y coordinates
+# four corners of a grid cell, and the name of the site,
+# and returns a 4x4 table of the name and x-y coordinates
 # of each point, plus the name of the grid cell formed by the 4 points.
 #
-# nblas_gps_library.csv contains the gps coordinates for each grid point. It is missing
-# coordinates for z4e. In progress: making a generic function to generate a similar 
-# gps library for each site.
+# gps_library.csv contains the gps coordinates for each grid point. 
 #
 # corner_point_names.R contains the function to make the 2x2 table of names from a 
 # quaddiag value.
 #
-
 
 corner_point_coordinates_general <- function(cornernames, site) {
   # make an empty output matrix

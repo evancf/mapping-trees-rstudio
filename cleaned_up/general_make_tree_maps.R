@@ -1,19 +1,23 @@
-# make_tree_maps uses find_tree_coordinates to find the coordinates of all the trees
-# in a grid cell. It makes a plot with the trees and the corners of the grid cell 
-# and saves it (currently to mapping_output/). It also saves a .csv file of the
-# coordinates for all the trees in a grid cell, also to mapping_output/. 
+# general_make_tree_maps uses find_tree_coordinates.R to find the coordinates of all the trees
+# in all the cells at a site. It makes plots with the trees and the corners of each grid cell 
+# and saves them to mapping_data_generalsite/mapping_output/. It also saves .csv files of the
+# coordinates for all the trees in each grid cell, also to mapping_output/. 
 #
-# If there are missing fields for a tree, or the calculations don't work out, the
-# tree will not be on the plot and its coordinates will be NAs in the data file.
+# These "tree_coordinates" .csv files include an "Issue" column that tells why a tree
+# has NAs instead of coordinates, or if there is a known or likely error in the tree's
+# placement.
 #
-# To add: a field in the data file that says why a tree is NA, or identifies trees
-# that are likely to be plotted wrong (outside the grid cell, or the distance between the 
-# two known points is smaller than usual and therefore likely to amplify a small
-# measurement error). 
-# 
-# Right now this is set up to work for nblas on Guam. It can be generalized so any
-# site is easy to process.
-# 
+# What the issues mean:
+# "Map_info_missing": One of the mapping data fields (distance to a known point, or 
+# coordinates of a known point) is blank. Generally, if one is they all are. 
+# "Distances_too_small": The sum of the distances from the tree to the left and right
+# corner points is less than the length of the straight line connecting the two corners.
+# "Corner_missing": One of the four grid cell corners is missing GPS coordinates.
+# "Outside_cell": It was possible to plot the tree, but it landed outside its grid cell.
+# "Small_RtoL": The distance between the right and left known points is small - for now,
+# less than 9m - meaning small differences in the measured distance from a tree to the
+# known points will translate into large differences in where the tree gets plotted. 
+#
 
 
 make_tree_maps_general <- function(site) {
