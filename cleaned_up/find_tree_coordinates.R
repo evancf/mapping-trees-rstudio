@@ -37,11 +37,20 @@ find_tree_coordinates <- function(cordat, mapdat) {
   # Describe two circles of known radii and center and find 2 intersection points
   
   RightToLeft <- ((KnownRightX - KnownLeftX)^2 + (KnownRightY - KnownLeftY)^2)^.5
+  # If RightToLeft is unusually small (for now, arbitrarily < 9m), the risk of
+  # plotting the tree incorrectly is high, because the circles will be close together
+  # and small errors in the radii will translate into large errors in the placement of
+  # the tree.
+  if (RightToLeft < 9) Issue <- "Small_RtoL"
   
+  # If sum of the distances to the known left and right points is less than the
+  # length of a straight line conencting the two known points, the two circles 
+  # will not intersect. Return NA and a note that the distances are too small. 
   if ((UnknownToLeft + UnknownToRight) < RightToLeft) {
     UnknownX <- NA
     UnknownY <- NA
-    UnknownCoords <- c(UnknownX, UnknownY)
+    Issue <- "Distances_too_small"
+    UnknownCoords <- c(UnknownX, UnknownY, Issue)
     return(UnknownCoords)
     
   }  
@@ -84,21 +93,26 @@ find_tree_coordinates <- function(cordat, mapdat) {
   if (is.na(SolutionOneDistance))  {
     UnknownX <- NA
     UnknownY <- NA
+    Issue <- "Corner_missing"
   } else if (is.na(SolutionTwoDistance)) {
     UnknownX <- NA
     UnknownY <- NA
+    Issue <- "Corner_missing"
   } else if (SolutionOneDistance == SolutionTwoDistance) {
     UnknownX <- SolutionOneX
     UnknownY <- SolutionOneY
+    Issue <- "Okay"
   } else if (SolutionOneDistance < SolutionTwoDistance) {
     UnknownX <- SolutionOneX
     UnknownY <- SolutionOneY
+    Issue <- "Okay"
   } else if (SolutionTwoDistance < SolutionOneDistance) {
     UnknownX <- SolutionTwoX
     UnknownY <- SolutionTwoY
+    Issue <- "Okay"
   }
   
   # Return chosen coordinates
-  UnknownCoords <- c(UnknownX, UnknownY)
+  UnknownCoords <- c(UnknownX, UnknownY, Issue)
   return(UnknownCoords)
 }

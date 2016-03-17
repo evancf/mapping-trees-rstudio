@@ -45,21 +45,24 @@ make_tree_maps <- function() {
     
     # Create empty matrix to store results. 
     dataoutrows <- c(1:repeats)
-    dataoutcols <- c("UnknownX", "UnknownY", "Tag","Issue")
-    dataout <- matrix(data = NA, nrow = repeats, ncol = 4, byrow = TRUE, dimnames = list(dataoutrows, dataoutcols))
+    # dataoutcols <- c("UnknownX", "UnknownY", "Issue", "Tag")
+    dataout_unk_x <- vector(mode = "numeric", length = repeats)
+    dataout_unk_y <- vector(mode="numeric", length = repeats)
+    dataout_tag <- vector(mode="integer", length = repeats)
+    dataout_issue <- vector(mode="character", length=repeats)
+    # dataout <- data.frame(data = NA, nrow = repeats, ncol = 4, byrow = TRUE, dimnames = list(dataoutrows, dataoutcols))
     
     # Run mapping and store results for every tree
     sofar <- 1
     while (sofar <= repeats) {
       
-      # If any of the mapping data fields are missing, skip calculations and return
+      # If the mapping data fields are missing, skip calculations and return
       # NA for coordinates. Add NAs and the tag number to the output matrix.
-      if (is.na(mapdata_for_mapping[sofar,1]) || is.na(mapdata_for_mapping[sofar,2])
-          || is.na(mapdata_for_mapping[sofar,3]) || is.na(mapdata_for_mapping[sofar,4])
-          || is.na(mapdata_for_mapping[sofar,5]) || is.na(mapdata_for_mapping[sofar,6])
-          || is.na(mapdata_for_mapping[sofar,7])) {
-        dataout[sofar, 1:2] <- NA
-        dataout[sofar, 3] <- mapdata[sofar,7]
+      if (is.na(mapdata_for_mapping[sofar,1]) || is.na(mapdata_for_mapping[sofar,3])) {
+        dataout_unk_x[sofar] <- NA
+        dataout_unk_y[sofar] <- NA
+        dataout_tag[sofar] <- mapdata[sofar,7]
+        dataout_issue[sofar] <- "Map_info_missing"
       } else {
         # If no fields are missing, run calculations.
         # Create a vector of the mapping data values for this tree.
@@ -68,15 +71,13 @@ make_tree_maps <- function() {
         datatouse <- as.numeric(mapdata_for_mapping[sofar,])
         iterationresult <- find_tree_coordinates(cornerdata, datatouse)
         
-        dataout[sofar, 1:2] <- iterationresult
-        dataout[sofar, 3] <- mapdata[sofar,7]
+        dataout_unk_x[sofar] <- as.numeric(iterationresult[1])
+        dataout_unk_y[sofar] <- as.numeric(iterationresult[2])
+        dataout_tag[sofar] <- mapdata[sofar,7]
+        dataout_issue[sofar] <- as.character(iterationresult[3])
       }
       sofar = sofar + 1
     }
-    
-    # Save the tree coordinates to subdirectory "mapping_output/.
-    filetitle <- paste("mapping_output/",plottitle, "_tree_coordinates.csv", sep="")
-    write.csv(dataout, file=filetitle, quote=FALSE, row.names=FALSE)
     
     # Make a plot of the mapped trees and the grid cell corner points.
     # Save a .pdf of the plot to mapping_output/.
@@ -85,10 +86,12 @@ make_tree_maps <- function() {
     library(ggrepel)
     
     plottitle <- plottitle <- as.character(cornerdata[1,4])
-    forplot <- as.data.frame(dataout[1:repeats,1:3])
+    forplotcols <- c("UnknownX", "UnknownY", "Tag")
+    forplotbind <- cbind(dataout_unk_x, dataout_unk_y, dataout_tag)
+    forplot <-as.data.frame(forplotbind)
     
-    grid_cell_map <- ggplot(forplot) + geom_point(aes(UnknownX, UnknownY)) + 
-      geom_text_repel(aes(UnknownX, UnknownY, label=Tag)) +
+    grid_cell_map <- ggplot(forplot) + geom_point(aes(dataout_unk_x, dataout_unk_y)) + 
+      geom_text_repel(aes(dataout_unk_x, dataout_unk_y, label=dataout_tag)) +
       theme_bw()+
       geom_point(data=cornerdata, aes(cornerx, cornery, label=cornerpt), size=3, color="blue") +
       geom_text_repel(data=cornerdata, aes(cornerx, cornery, label=cornerpt), size=6, color="blue") +
@@ -97,6 +100,12 @@ make_tree_maps <- function() {
       ggtitle(plottitle)
     plotfilename <- paste(plottitle, ".pdf", sep="")
     ggsave(plotfilename, plot=grid_cell_map, device = "pdf", path="mapping_output/", limitsize = TRUE)
+    
+    # Save the tree coordinates to subdirectory "mapping_output/.
+    forfilebind <- cbind(dataout_unk_x, dataout_unk_y, dataout_issue, dataout_tag)
+    forfile <- as.data.frame(forfilebind)
+    filetitle <- paste("mapping_output/",plottitle, "_tree_coordinates.csv", sep="")
+    write.csv(forfile, file=filetitle, quote=FALSE, row.names=FALSE)
     
     completed = completed + 1
   }
