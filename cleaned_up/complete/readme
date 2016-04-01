@@ -10,12 +10,13 @@ general_generate_data_files.R: general_map_setup("file name", "site name") creat
 
 general_make_tree_maps: make_tree_maps_general("site") uses find_tree_coordinates.R to find the coordinates of all the trees in all the cells at a site. It makes plots with the trees and the corners of each grid cell. It also makes .csv files of the coordinates for all the trees in each grid cell. The outputs go in mapping_data_general/[site]/mapping_output.
 
-The "tree_coordinates" .csv files include an "Issue" column that tells why a tree has NAs instead of coordinates, or if there is a known or likely error in the tree's placement. Here's what the issues mean:
-"Map_info_missing": One of the mapping data fields (distance to a known point, or coordinates of a known point) is blank.
-"Distances_too_small": The sum of the distances from the tree to the left and right known points is less than the length of the straight line connecting the two corners.
-"Corner_missing": One of the four grid cell corners is missing GPS coordinates.
+The "tree_coordinates" .csv files include an "Issue" column that tells why a tree has NAs instead of coordinates, or if there is a known or likely error in the tree's placement. If there are multiple issues they will all be listed. Here's what the issues mean:
+"Map_info_missing": One of the mapping data fields (distance to a known point, or coordinates of a known point) is blank. Returns NA coordinates. 
+"Distances_too_small": The sum of the distances from the tree to the left and right known points is less than the length of the straight line connecting the two corners. Right now, if this happens, I'm increasing both distances by slightly over half the discrepancy, to estimate the tree's likely position. However, these trees are very likely to be incorrectly placed.
 "Outside_cell": It was possible to plot the tree, but it landed outside its grid cell.
-"Small_RtoL": The distance between the right and left known points is small - for now, less than 9m - meaning small differences in the measured distance from a tree to the known points will translate into large differences in where the tree gets plotted. 
+"Small_RtoL": The distance between the right and left known points is small - for now, less than 9m - meaning small differences in the measured distance from a tree to the known points will translate into large errors in where the tree gets plotted. 
+"Calculation_problem": It is impossible to calculate a point from the given information. This should only happen if there is already another issue - Small_RtoL or Distances_too_small. Returns NA coordinates. 
+"Corner_missing": One of the four grid cell corners is missing GPS coordinates. Returns NA coordinates.
 
 corner_points_coordinates_general.R: finds the GPS coordinates of the four corners of a grid cell given the names of the points. Used by general_map_setup.
 

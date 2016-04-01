@@ -16,8 +16,9 @@
 
 find_tree_coordinates <- function(cordat, mapdat) {  
   library(sp)
+  Issue <- ""
   # Coordinates of the 4 corners of the grid cell
-  # A and B could be KnownLeft and KnownRight, but this isn't necessary.
+ # A and B could be KnownLeft and KnownRight, but this isn't necessary.
   GridPointAx <- cordat[1,2]
   GridPointAy <- cordat[1,3]
   GridPointBx <- cordat[2,2]
@@ -27,6 +28,9 @@ find_tree_coordinates <- function(cordat, mapdat) {
   GridPointDx <- cordat[4,2]
   GridPointDy <- cordat[4,3]
   
+  if(anyNA(cordat)) Issue <- paste(Issue, "Corner_missing", sep="_")
+  
+  
   # Known values
   KnownLeftX <- mapdat[1]
   KnownLeftY <- mapdat[2]
@@ -35,8 +39,10 @@ find_tree_coordinates <- function(cordat, mapdat) {
   UnknownToLeft <- mapdat[5]
   UnknownToRight <- mapdat[6]
   
-  # Describe two circles of known radii and center and find 2 intersection points
+
   
+  # Describe two circles of known radii and center and find 2 intersection points
+  RTLadjust <- 0 
   RightToLeft <- ((KnownRightX - KnownLeftX)^2 + (KnownRightY - KnownLeftY)^2)^.5
   # If RightToLeft is unusually small (for now, arbitrarily < 9m), the risk of
   # plotting the tree incorrectly is high, because the circles will be close together
@@ -46,19 +52,25 @@ find_tree_coordinates <- function(cordat, mapdat) {
   
   # If sum of the distances to the known left and right points is less than the
   # length of a straight line conencting the two known points, the two circles 
-  # will not intersect. Return NA and a note that the distances are too small. 
+  # will not intersect. 
+  # Adjust both distances so they just exceed the length of the straight line
+  # connecting the two points. Add a note to Issue. 
   if ((UnknownToLeft + UnknownToRight) < RightToLeft) {
-    UnknownX <- NA
-    UnknownY <- NA
-    Issue <- "Distances_too_small"
-    UnknownCoords <- c(UnknownX, UnknownY, Issue)
-   return(UnknownCoords)
+    # UnknownX <- NA
+    # UnknownY <- NA
+    RTLadjust <- 1
+    RTL_change <- (RightToLeft - UnknownToLeft - UnknownToRight) / 2
+    UnknownToLeft <- RTL_change + UnknownToLeft + 0.01
+    UnknownToRight <- RTL_change + UnknownToRight + 0.01
+    Issue <- paste(Issue, "Distances_too_small", sep="_")
+    # UnknownCoords <- c(UnknownX, UnknownY, Issue)
+    # return(UnknownCoords)
     
   }  
   
   MidpointToLeft <- (UnknownToLeft^2 - UnknownToRight^2 + RightToLeft^2) / (2 * RightToLeft)
   MidpointToRight <- (UnknownToRight^2 - UnknownToLeft^2 + RightToLeft^2) / (2* RightToLeft)
-  MidpointToUnknown <- (UnknownToLeft^2 - MidpointToLeft^2) ^ .5
+  MidpointToUnknown <- (abs(UnknownToLeft^2 - MidpointToLeft^2)) ^ .5
   
   MidpointX<- KnownLeftX + ((MidpointToLeft * (KnownRightX - KnownLeftX))/RightToLeft)
   MidpointY<- KnownLeftY + ((MidpointToLeft * (KnownRightY - KnownLeftY))/RightToLeft)
@@ -82,48 +94,63 @@ find_tree_coordinates <- function(cordat, mapdat) {
   SolutionOneDistance <- ((SolutionOneX - GridCellCenterX)^2 + (SolutionOneY - GridCellCenterY)^2)^.5
   SolutionTwoDistance <- ((SolutionTwoX - GridCellCenterX)^2 + (SolutionTwoY - GridCellCenterY)^2)^.5
   
-  # If one of the distances is NA, return NA. I think this happens when one of the 
-  # grid cell coordinates is missing, or no intersection points exist. 
+  # If one of the distances is NA, use the other one. If both are NA, return NA. 
+  # The NAs seem to happen when the right to left or unknown to corner distances
+  # don't work out. This only happens for points that already had another known issue,
+  # like a small RtoL distance or radii that never intersect.
   #
   # If the two solutions are the same distance from the middle, arbitrarily use the
   # first solution. I think this happens when there is exactly one intersection point.
   # 
   # Otherwise pick whichever solution is closer to the middle.
-  
-  
-  if (is.na(SolutionOneDistance))  {
+  if ((is.na(SolutionOneDistance) && (is.na(SolutionTwoDistance)))) {
     UnknownX <- NA
     UnknownY <- NA
-    Issue <- "Corner_missing"
-  } else if (is.na(SolutionTwoDistance)) {
-    UnknownX <- NA
-    UnknownY <- NA
-    Issue <- "Corner_missing"
-  } else if (SolutionOneDistance == SolutionTwoDistance) {
+    Issue <- paste(Issue, "Calculation_problem", sep = "_")
+    UnknownCoords <- c(UnknownX, UnknownY, Issue)
+    return(UnknownCoords)
+  }
+  
+  if (is.na(SolutionOneDistance)) {
+      UnknownX <- SolutionTwoX
+      UnknownY <- SolutionTwoY 
+      UnknownCoords <- c(UnknownX, UnknownY, Issue)
+      return(UnknownCoords)
+  }
+  
+  if (is.na(SolutionTwoDistance)) {
+      UnknownX <- SolutionOneX
+      UnknownY <- SolutionOneY 
+      UnknownCoords <- c(UnknownX, UnknownY, Issue)
+      return(UnknownCoords)
+  }
+  
+  if (SolutionOneDistance == SolutionTwoDistance) {
     UnknownX <- SolutionOneX
     UnknownY <- SolutionOneY
     inside <- point.in.polygon(UnknownX, UnknownY, c(GridPointAx, GridPointBx, GridPointCx, GridPointDx, GridPointAx), c(GridPointAy, GridPointBy, GridPointCy, GridPointDy, GridPointAy))
     if (inside == 0) {
-      Issue <- "Outside_cell"
-      } else Issue <- "Okay"
-    
-  } else if (SolutionOneDistance < SolutionTwoDistance) {
+      Issue <- paste(Issue, "Outside_cell", sep = "_")
+    } else if (RTLadjust == 0) Issue <- "Okay"
+  }  
+  if (SolutionOneDistance < SolutionTwoDistance) {
     UnknownX <- SolutionOneX
     UnknownY <- SolutionOneY
     inside <- point.in.polygon(UnknownX, UnknownY, c(GridPointAx, GridPointBx, GridPointCx, GridPointDx, GridPointAx), c(GridPointAy, GridPointBy, GridPointCy, GridPointDy, GridPointAy))
     if (inside == 0) {
-      Issue <- "Outside_cell"
-    } else Issue <- "Okay"
+      Issue <- paste(Issue, "Outside_cell", sep = "_")
+    } else if (RTLadjust ==0 ) Issue <- "Okay"
     
-  } else if (SolutionTwoDistance < SolutionOneDistance) {
+  } 
+  if (SolutionTwoDistance < SolutionOneDistance) {
     UnknownX <- SolutionTwoX
     UnknownY <- SolutionTwoY
     inside <- point.in.polygon(UnknownX, UnknownY, c(GridPointAx, GridPointBx, GridPointCx, GridPointDx, GridPointAx), c(GridPointAy, GridPointBy, GridPointCy, GridPointDy, GridPointAy))
     if (inside == 0) {
-      Issue <- "Outside_cell"
-    } else Issue <- "Okay"
-    
+      Issue <- paste(Issue, "Outside_cell", sep = "_")
+    } else if (RTLadjust ==0 ) Issue <- "Okay"
   }
+
   
   # Return chosen coordinates
   UnknownCoords <- c(UnknownX, UnknownY, Issue)
